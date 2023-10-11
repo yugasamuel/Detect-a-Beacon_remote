@@ -8,6 +8,19 @@
 import UIKit
 import CoreLocation
 
+extension UIView {
+    func bounceOut(duration: TimeInterval) {
+        UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, animations: {
+            self.transform = CGAffineTransform(scaleX: 0.0001, y: 0.0001)
+        }) { _ in
+            UIView.animate(withDuration: 0.7, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5,
+                           animations: {
+                self.transform = CGAffineTransform.identity
+            })
+        }
+    }
+}
+
 class ViewController: UIViewController, CLLocationManagerDelegate {
     var distanceReading: UILabel!
     var locationManager: CLLocationManager?
@@ -46,6 +59,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         circleView.backgroundColor = .yellow
         circleView.layer.cornerRadius = 128
         circleView.translatesAutoresizingMaskIntoConstraints = false
+        
+        circleView.bounceOut(duration: 1)
         
         view.addSubview(distanceReading)
         view.addSubview(circleView)
@@ -87,12 +102,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                 self.view.backgroundColor = UIColor.blue
                 self.distanceReading.text = "FAR"
                 self.scaleFactor = 0.25
-
+                
             case .near:
                 self.view.backgroundColor = UIColor.orange
                 self.distanceReading.text = "NEAR"
                 self.scaleFactor = 0.5
-
+                
             case .immediate:
                 self.view.backgroundColor = UIColor.red
                 self.distanceReading.text = "RIGHT HERE"
@@ -121,7 +136,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     func startScanning() {
         let uuid = UUID(uuidString: "5A4BCFCE-174E-4BAC-A814-092E77F6B7E5")!
         let beaconRegion = CLBeaconRegion(uuid: uuid, major: 123, minor: 456, identifier: "MyBeacon")
-
+        
         locationManager?.startMonitoring(for: beaconRegion)
         locationManager?.startRangingBeacons(satisfying: beaconRegion.beaconIdentityConstraint)
     }
